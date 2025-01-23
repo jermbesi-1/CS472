@@ -27,14 +27,13 @@ def github_auth(url, lsttoken, ct):
 def countfiles(dictfiles, lsttokens, repo):
     ipage = 1  # url page counter
     ct = 0  # token counter
-
+    
     try:
         # loop though all the commit pages until the last returned empty page
         while True:
             spage = str(ipage)
             commitsUrl = 'https://api.github.com/repos/' + repo + '/commits?page=' + spage + '&per_page=100'
             jsonCommits, ct = github_auth(commitsUrl, lsttokens, ct)
-
             # break out of the while loop if there are no more commits in the pages
             if len(jsonCommits) == 0:
                 break
@@ -47,8 +46,9 @@ def countfiles(dictfiles, lsttokens, repo):
                 filesjson = shaDetails['files']
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
-                    dictfiles[filename] = dictfiles.get(filename, 0) + 1
-                    print(filename)
+                    if 'src' in filename:
+                        dictfiles[filename] = dictfiles.get(filename, 0) + 1
+                        print(filename)
             ipage += 1
     except:
         print("Error receiving data")
